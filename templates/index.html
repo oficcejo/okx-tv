@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradingView 自动交易系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TradingView 自动交易系统</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}" class="active">首页</a></li>
+                    <li><a href="{{ url_for('settings') }}">设置</a></li>
+                    <li><a href="{{ url_for('history') }}">交易历史</a></li>
+                    <li><a href="{{ url_for('status') }}">系统状态</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for message in messages %}
+                            <div class="message">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            <section class="status-panel">
+                <h2>系统状态</h2>
+                <div class="status-indicator">
+                    <span class="status-label">邮件检查器:</span>
+                    <span class="status-value {% if email_checker_running %}running{% else %}stopped{% endif %}" id="checker-status">
+                        {% if email_checker_running %}运行中{% else %}已停止{% endif %}
+                    </span>
+                </div>
+                
+                <div class="status-message">
+                    {% if email_checker_running %}
+                        <p>系统正在监控TradingView邮件信号，收到信号后将自动执行交易。</p>
+                    {% else %}
+                        <p>系统当前已停止，点击"启动"按钮开始监控邮件信号。</p>
+                    {% endif %}
+                </div>
+                
+                <div class="control-buttons">
+                    <form action="{{ url_for('start_checker') }}" method="post" class="inline-form">
+                        <button type="submit" class="btn btn-start" {% if email_checker_running %}disabled{% endif %}>
+                            <i class="icon-play"></i> 启动系统
+                        </button>
+                    </form>
+                    <form action="{{ url_for('stop_checker') }}" method="post" class="inline-form">
+                        <button type="submit" class="btn btn-stop" {% if not email_checker_running %}disabled{% endif %}>
+                            <i class="icon-stop"></i> 停止系统
+                        </button>
+                    </form>
+                </div>
+            </section>
+            
+            <section class="info-panel">
+                <h2>使用说明</h2>
+                <p>本系统可以自动检查来自 TradingView 的交易信号邮件，并通过 OKX 执行交易。</p>
+                <ol>
+                    <li>在 <a href="{{ url_for('settings') }}">设置</a> 页面配置您的交易参数和 API 密钥</li>
+                    <li>确保 TradingView 警报设置为发送邮件，主题包含 "警报：Long" 或 "警报：Short"</li>
+                    <li>点击 "启动" 按钮开始自动检查邮件和执行交易</li>
+                    <li>在 <a href="{{ url_for('history') }}">交易历史</a> 页面查看已执行的交易</li>
+                </ol>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2023 TradingView 自动交易系统</p>
+        </footer>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html> 

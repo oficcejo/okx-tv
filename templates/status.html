@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统状态 - TradingView 自动交易系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TradingView 自动交易系统</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">首页</a></li>
+                    <li><a href="{{ url_for('settings') }}">设置</a></li>
+                    <li><a href="{{ url_for('history') }}">交易历史</a></li>
+                    <li><a href="{{ url_for('status') }}" class="active">系统状态</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for message in messages %}
+                            <div class="message">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            <section class="status-panel">
+                <h2>系统状态</h2>
+                <div class="status-indicator">
+                    <span class="status-label">邮件检查器:</span>
+                    <span class="status-value {% if email_checker_running %}running{% else %}stopped{% endif %}" id="checker-status">
+                        {% if email_checker_running %}运行中{% else %}已停止{% endif %}
+                    </span>
+                </div>
+                
+                <div class="status-details">
+                    <h3>运行信息</h3>
+                    <table class="status-table">
+                        <tr>
+                            <td>上次检查时间:</td>
+                            <td id="last-check-time">{{ last_check_time or '无' }}</td>
+                        </tr>
+                        <tr>
+                            <td>已处理邮件数:</td>
+                            <td>{{ email_count }}</td>
+                        </tr>
+                        <tr>
+                            <td>已执行交易数:</td>
+                            <td>{{ trade_count }}</td>
+                        </tr>
+                        <tr>
+                            <td>运行时长:</td>
+                            <td id="running-time">{{ running_time or '未运行' }}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="account-info-section">
+                    <h3>账户信息</h3>
+                    <div class="account-actions">
+                        <button id="get-account-info" class="btn btn-secondary">获取账户信息</button>
+                        <button id="test-trade-cycle" class="btn btn-secondary">测试交易周期(10USDT)</button>
+                        <span id="account-info-result" class="test-result"></span>
+                    </div>
+                    <div id="account-info-details" class="account-details" style="display: none;">
+                        <div class="info-group">
+                            <h4>账户配置</h4>
+                            <pre id="account-config"></pre>
+                        </div>
+                        <div class="info-group">
+                            <h4>账户余额</h4>
+                            <pre id="account-balance"></pre>
+                        </div>
+                        <div class="info-group">
+                            <h4>持仓信息</h4>
+                            <pre id="account-positions"></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="control-buttons">
+                    <form action="{{ url_for('start_checker') }}" method="post" class="inline-form">
+                        <button type="submit" class="btn btn-start" {% if email_checker_running %}disabled{% endif %}>
+                            <i class="icon-play"></i> 启动系统
+                        </button>
+                    </form>
+                    <form action="{{ url_for('stop_checker') }}" method="post" class="inline-form">
+                        <button type="submit" class="btn btn-stop" {% if not email_checker_running %}disabled{% endif %}>
+                            <i class="icon-stop"></i> 停止系统
+                        </button>
+                    </form>
+                </div>
+            </section>
+            
+            <section class="recent-emails">
+                <h2>最近处理的邮件</h2>
+                <div class="email-test-actions">
+                    <button id="test-email-receive" class="btn btn-secondary">测试邮件接收</button>
+                    <span id="email-receive-result" class="test-result"></span>
+                </div>
+                <div id="recent-emails-test-result" class="email-test-result" style="display: none;">
+                    <h3>最近3封邮件</h3>
+                    <table class="email-table">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>发件人</th>
+                                <th>主题</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-emails-list">
+                            <!-- 这里将通过JavaScript动态填充 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                {% if emails %}
+                    <table class="email-table">
+                        <thead>
+                            <tr>
+                                <th>处理时间</th>
+                                <th>发件人</th>
+                                <th>主题</th>
+                                <th>执行交易</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for email in emails %}
+                                <tr>
+                                    <td>{{ email['processed_at'] if 'processed_at' in email.keys() else '未知' }}</td>
+                                    <td>{{ email['sender'] if 'sender' in email.keys() else '未知' }}</td>
+                                    <td>{{ email['subject'] if 'subject' in email.keys() else '未知' }}</td>
+                                    <td class="{% if 'trade_executed' in email.keys() and email['trade_executed'] %}executed{% else %}not-executed{% endif %}">
+                                        {{ '是' if 'trade_executed' in email.keys() and email['trade_executed'] else '否' }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="no-data">
+                        <p>暂无处理记录</p>
+                    </div>
+                {% endif %}
+            </section>
+            
+            <section class="system-logs">
+                <h2>系统日志</h2>
+                <div class="log-container">
+                    <pre id="log-content">{{ log_content }}</pre>
+                </div>
+                <div class="log-actions">
+                    <button id="refresh-logs" class="btn btn-secondary">刷新日志</button>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2023 TradingView 自动交易系统</p>
+        </footer>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/status.js') }}"></script>
+</body>
+</html> 

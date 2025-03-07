@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服务器错误 - TradingView 自动交易系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TradingView 自动交易系统</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">首页</a></li>
+                    <li><a href="{{ url_for('settings') }}">设置</a></li>
+                    <li><a href="{{ url_for('history') }}">交易历史</a></li>
+                    <li><a href="{{ url_for('status') }}">系统状态</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main>
+            <section class="error-page">
+                <h2>500 - 服务器错误</h2>
+                <p>抱歉，服务器出现了一些问题。请稍后再试。</p>
+                <div class="error-actions">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">返回首页</a>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2023 TradingView 自动交易系统</p>
+        </footer>
+    </div>
+</body>
+</html> 

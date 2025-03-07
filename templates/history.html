@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交易历史 - TradingView 自动交易系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TradingView 自动交易系统</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">首页</a></li>
+                    <li><a href="{{ url_for('settings') }}">设置</a></li>
+                    <li><a href="{{ url_for('history') }}" class="active">交易历史</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main>
+            <section class="history-table">
+                <h2>交易历史</h2>
+                
+                {% if trades %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>交易对</th>
+                                <th>方向</th>
+                                <th>数量</th>
+                                <th>价格</th>
+                                <th>止盈</th>
+                                <th>止损</th>
+                                <th>状态</th>
+                                <th>订单ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trade in trades %}
+                                <tr>
+                                    <td>{{ trade['timestamp'] }}</td>
+                                    <td>{{ trade['trading_pair'] }}</td>
+                                    <td class="{% if trade['direction'] == 'LONG' %}long{% else %}short{% endif %}">
+                                        {{ trade['direction'] }}
+                                    </td>
+                                    <td>{{ trade['amount'] }}</td>
+                                    <td>{{ trade['price'] }}</td>
+                                    <td>{{ trade['take_profit'] }}</td>
+                                    <td>{{ trade['stop_loss'] }}</td>
+                                    <td>{{ trade['status'] }}</td>
+                                    <td>{{ trade['order_id'] }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="no-data">
+                        <p>暂无交易记录</p>
+                    </div>
+                {% endif %}
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2023 TradingView 自动交易系统</p>
+        </footer>
+    </div>
+</body>
+</html> 

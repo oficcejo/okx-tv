@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设置 - TradingView 自动交易系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TradingView 自动交易系统</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">首页</a></li>
+                    <li><a href="{{ url_for('settings') }}" class="active">设置</a></li>
+                    <li><a href="{{ url_for('history') }}">交易历史</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for message in messages %}
+                            <div class="message">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            <section class="settings-form">
+                <h2>系统设置</h2>
+                <form action="{{ url_for('settings') }}" method="post">
+                    <div class="form-section">
+                        <h3>交易设置</h3>
+                        
+                        <div class="form-group">
+                            <label for="trading_pair">交易对:</label>
+                            <input type="text" id="trading_pair" name="trading_pair" value="{{ settings.get('trading_pair', 'BTC-USDT') }}" required>
+                            <small>例如: BTC-USDT, ETH-USDT</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="trading_mode">交易模式:</label>
+                            <select id="trading_mode" name="trading_mode" required>
+                                <option value="spot" {% if settings.get('trading_mode') == 'spot' %}selected{% endif %}>现货</option>
+                                <option value="margin" {% if settings.get('trading_mode') == 'margin' %}selected{% endif %}>杠杆</option>
+                                <option value="swap" {% if settings.get('trading_mode') == 'swap' %}selected{% endif %}>合约</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="investment_amount">投入金额 (USDT):</label>
+                            <input type="number" id="investment_amount" name="investment_amount" value="{{ settings.get('investment_amount', '100') }}" min="1" step="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="leverage">杠杆倍率:</label>
+                            <input type="number" id="leverage" name="leverage" value="{{ settings.get('leverage', '1') }}" min="1" max="125" required>
+                            <small>仅适用于杠杆和合约交易</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="take_profit">止盈百分比 (%):</label>
+                            <input type="number" id="take_profit" name="take_profit" value="{{ settings.get('take_profit', '5') }}" min="0.1" step="0.1" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="stop_loss">止损百分比 (%):</label>
+                            <input type="number" id="stop_loss" name="stop_loss" value="{{ settings.get('stop_loss', '2') }}" min="0.1" step="0.1" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>邮件设置</h3>
+                        
+                        <div class="form-group">
+                            <label for="email_server">邮件服务器:</label>
+                            <input type="text" id="email_server" name="email_server" value="{{ settings.get('email_server', 'imap.gmail.com') }}" required>
+                            <small>例如: imap.gmail.com, imap.qq.com，imap.163.com，推荐使用QQ邮箱</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email_username">邮箱地址:</label>
+                            <input type="text" id="email_username" name="email_username" value="{{ settings.get('email_username', '') }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email_password">邮箱密码/授权码:</label>
+                            <input type="password" id="email_password" name="email_password" value="{{ settings.get('email_password', '') }}" required>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" id="test-email-btn" class="btn btn-secondary">测试邮箱连接</button>
+                            <span id="email-test-result" class="test-result"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>OKX API 设置</h3>
+                        
+                        <div class="form-group">
+                            <label for="okx_api_key">API Key:</label>
+                            <input type="text" id="okx_api_key" name="okx_api_key" value="{{ settings.get('okx_api_key', '') }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="okx_secret_key">Secret Key:</label>
+                            <input type="password" id="okx_secret_key" name="okx_secret_key" value="{{ settings.get('okx_secret_key', '') }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="okx_passphrase">Passphrase:</label>
+                            <input type="password" id="okx_passphrase" name="okx_passphrase" value="{{ settings.get('okx_passphrase', '') }}" required>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" id="test-api-btn" class="btn btn-secondary">测试API连接</button>
+                            <span id="api-test-result" class="test-result"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">保存设置</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2023 TradingView 自动交易系统</p>
+        </footer>
+    </div>
+    <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+</body>
+</html> 

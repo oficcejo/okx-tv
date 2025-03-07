@@ -1,4 +1,4 @@
-# TradingView 自动交易系统
+# 基于TradingView邮件信号的okx自动交易系统
 
 这是一个基于 TradingView 信号的自动化交易系统，可以自动监控邮件中的交易信号并在 OKX 交易所执行相应的交易操作。
 

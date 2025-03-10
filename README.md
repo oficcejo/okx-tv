@@ -1,7 +1,14 @@
 # TradingView邮件信号的okx自动交易系统
 
 这是一个基于 TradingView 信号的自动化交易系统，可以自动监控邮件中的交易信号并在 OKX 交易所执行相应的交易操作。
-
+## 基本条件
+### 本地部署，大陆地区需要科学上网环境
+### 服务器部署，可购买美国vps服务器部署
+- 推荐美国老牌服务器厂商RackNerd稳定服务器**支持支付宝付款**
+- [满足要求型：1核心1G内存24GSSD2T带宽11.29美元/年](https://my.racknerd.com/aff.php?aff=13902&pid=903)
+- [进阶型：1核心2G内存40GSSD3.5T带宽18.29美元/年](https://my.racknerd.com/aff.php?aff=13902&pid=904)
+- [推荐型：2核心3.5G内存65GSSD7T带宽32.49美元/年](https://my.racknerd.com/aff.php?aff=13902&pid=905)
+- [高端型：4核心6G内存140GSSD12T带宽59.99美元/年](https://my.racknerd.com/aff.php?aff=13902&pid=907)
 ## 主要功能
 
 ### 1. 信号监控

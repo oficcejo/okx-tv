@@ -5,7 +5,8 @@
 
 ## 基本条件
 ### 1、本地部署（大陆地区需要科学上网环境）
-### 服务器部署，最好用美国vps服务器部署
+win10以上系统，linux推荐ubuntu20以上系统，MACOS未测试，python3.12版本，能访问tradingview官网。
+### 2、服务器部署，最好用美国vps服务器部署
 推荐美国老牌服务器厂商RackNerd稳定服务器**支持支付宝付款**
 - [满足要求型：1核心1G内存24GSSD2T带宽11.29美元/年](https://my.racknerd.com/aff.php?aff=13902&pid=903)
 - [进阶型：1核心2G内存40GSSD3.5T带宽18.29美元/年](https://my.racknerd.com/aff.php?aff=13902&pid=904)
@@ -34,7 +35,7 @@
 ## 安装说明
 
 ### 1. 环境要求
-- Python 3.7 或更高版本
+- Python 3.12 或更高版本
 - Windows/Linux/MacOS 操作系统
 
 ### 2. 安装步骤

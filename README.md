@@ -118,6 +118,7 @@ python app.py
    - 选择发送邮件提醒
    - 邮件主题中包含 "long" 表示做多信号
    - 邮件主题中包含 "short" 表示做空信号
+![image](https://github.com/user-attachments/assets/7afb3b43-b85d-46db-a1bf-1b6143972bb9)
 
 2. 系统运行后会：
    - 自动检查邮件信号
